@@ -1,0 +1,65 @@
+{
+  "linha": "L5",
+  "itens": [
+    {
+      "item": "Chapa aço SAE 1020",
+      "preco_unitario": 22.0,
+      "demanda_anual": 79200,
+      "valor_anual": 1742400.0
+    },
+    {
+      "item": "Tubo estrutural",
+      "preco_unitario": 18.5,
+      "demanda_anual": 39600,
+      "valor_anual": 732600.0
+    },
+    {
+      "item": "Eletrodo de solda",
+      "preco_unitario": 8.0,
+      "demanda_anual": 52800,
+      "valor_anual": 422400.0
+    },
+    {
+      "item": "Gás argônio",
+      "preco_unitario": 120.0,
+      "demanda_anual": 800,
+      "valor_anual": 96000.0
+    },
+    {
+      "item": "Primer anticorrosivo",
+      "preco_unitario": 45.0,
+      "demanda_anual": 2200,
+      "valor_anual": 99000.0
+    },
+    {
+      "item": "Tinta poliéster pó",
+      "preco_unitario": 38.0,
+      "demanda_anual": 3500,
+      "valor_anual": 133000.0
+    },
+    {
+      "item": "Parafuso sextavado M10",
+      "preco_unitario": 0.55,
+      "demanda_anual": 158400,
+      "valor_anual": 87120.0
+    },
+    {
+      "item": "Porca autotravante M10",
+      "preco_unitario": 0.4,
+      "demanda_anual": 158400,
+      "valor_anual": 63360.0
+    },
+    {
+      "item": "Embalagem industrial",
+      "preco_unitario": 3.2,
+      "demanda_anual": 26400,
+      "valor_anual": 84480.0
+    },
+    {
+      "item": "Fita de aço",
+      "preco_unitario": 1.8,
+      "demanda_anual": 39600,
+      "valor_anual": 71280.0
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "linha": "L3",
+  "itens": [
+    {
+      "item": "Ferro fundido nodular",
+      "preco_unitario": 10.5,
+      "demanda_anual": 450000,
+      "valor_anual": 4725000.0
+    },
+    {
+      "item": "Areia de fundição",
+      "preco_unitario": 2.8,
+      "demanda_anual": 900000,
+      "valor_anual": 2520000.0
+    },
+    {
+      "item": "Liga de magnésio",
+      "preco_unitario": 65.0,
+      "demanda_anual": 18000,
+      "valor_anual": 1170000.0
+    },
+    {
+      "item": "Tinta anticorrosiva",
+      "preco_unitario": 35.0,
+      "demanda_anual": 12000,
+      "valor_anual": 420000.0
+    },
+    {
+      "item": "Rebolo de retífica",
+      "preco_unitario": 42.0,
+      "demanda_anual": 8500,
+      "valor_anual": 357000.0
+    },
+    {
+      "item": "Filtro industrial",
+      "preco_unitario": 15.0,
+      "demanda_anual": 6000,
+      "valor_anual": 90000.0
+    },
+    {
+      "item": "Caixa de papelão reforçado",
+      "preco_unitario": 2.5,
+      "demanda_anual": 225000,
+      "valor_anual": 562500.0
+    },
+    {
+      "item": "Pallet de madeira",
+      "preco_unitario": 8.0,
+      "demanda_anual": 15000,
+      "valor_anual": 120000.0
+    },
+    {
+      "item": "Fita stretch",
+      "preco_unitario": 0.6,
+      "demanda_anual": 150000,
+      "valor_anual": 90000.0
+    },
+    {
+      "item": "Etiqueta rastreabilidade",
+      "preco_unitario": 0.15,
+      "demanda_anual": 450000,
+      "valor_anual": 67500.0
+    }
+  ]
+}

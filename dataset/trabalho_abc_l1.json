@@ -1,0 +1,65 @@
+{
+  "linha": "L1",
+  "itens": [
+    {
+      "item": "Ferro fundido cinzento",
+      "preco_unitario": 12.8,
+      "demanda_anual": 180000,
+      "valor_anual": 2304000.0
+    },
+    {
+      "item": "Grafite em pó",
+      "preco_unitario": 45.0,
+      "demanda_anual": 42000,
+      "valor_anual": 1890000.0
+    },
+    {
+      "item": "Pastilha abrasiva",
+      "preco_unitario": 8.5,
+      "demanda_anual": 95000,
+      "valor_anual": 807500.0
+    },
+    {
+      "item": "Óleo de corte",
+      "preco_unitario": 32.0,
+      "demanda_anual": 4500,
+      "valor_anual": 144000.0
+    },
+    {
+      "item": "Disco de desbaste",
+      "preco_unitario": 18.9,
+      "demanda_anual": 6200,
+      "valor_anual": 117180.0
+    },
+    {
+      "item": "Parafuso M8x25",
+      "preco_unitario": 0.35,
+      "demanda_anual": 360000,
+      "valor_anual": 126000.0
+    },
+    {
+      "item": "Embalagem papelão",
+      "preco_unitario": 1.2,
+      "demanda_anual": 180000,
+      "valor_anual": 216000.0
+    },
+    {
+      "item": "Etiqueta adesiva",
+      "preco_unitario": 0.08,
+      "demanda_anual": 360000,
+      "valor_anual": 28800.0
+    },
+    {
+      "item": "Fita de arquear",
+      "preco_unitario": 0.45,
+      "demanda_anual": 85000,
+      "valor_anual": 38250.0
+    },
+    {
+      "item": "Lubrificante anticorrosivo",
+      "preco_unitario": 28.0,
+      "demanda_anual": 3800,
+      "valor_anual": 106400.0
+    }
+  ]
+}

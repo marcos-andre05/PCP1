@@ -1,0 +1,11 @@
+item,preco_unitario,demanda_anual,valor_anual
+Aço SAE 1045,15.6,96000,1497600.0
+Rolamento cônico,38.5,48000,1848000.0
+Retentor de vedação,12.3,48000,590400.0
+Graxa EP2,22.0,5500,121000.0
+Inserto de usinagem,85.0,1200,102000.0
+Fluido de retífica,18.0,3000,54000.0
+Embalagem plástica,0.9,96000,86400.0
+Etiqueta código barras,0.12,192000,23040.0
+Arruela de pressão,0.18,192000,34560.0
+Protetor VCI,2.5,48000,120000.0
