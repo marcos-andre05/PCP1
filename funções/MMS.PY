@@ -5,3 +5,8 @@ def media_movel_simples(demandas, n):
         janela = demandas[t - n:t]
         previsoes.append(sum(janela) / n)
     return previsoes 
+
+def prever_media_movel_simples(demandas, n_mms, horizonte):
+    media = sum(demandas[-n_mms:]) / n_mms
+    return [round(media)] * horizonte
+
