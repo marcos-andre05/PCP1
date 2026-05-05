@@ -46,7 +46,7 @@ def executar_torneio(demandas, n_mms=3, alpha=0.3):
     todas_enviesadas = df_ok.empty
     
     if not todas_enviesadas:
-        melhor = df_ok.loc[df_ok['MAPE (%)'].idxmin()]
+        melhor = df_ok.loc[df_ok['MAD'].idxmin()]  # critério: menor MAD (conforme enunciado)
     else:
         df_resultados["TS_abs"] = df_resultados["TS"].abs()
         melhor = df_resultados.loc[df_resultados['TS_abs'].idxmin()]
@@ -56,6 +56,7 @@ def executar_torneio(demandas, n_mms=3, alpha=0.3):
     return {
         "tabela": df_resultados,
         "vencedora": nome_vencedora,
+        "mad": melhor['MAD'],
         "mape": melhor['MAPE (%)'],
         "ts_final": melhor['TS'],
         "ts_detalhes": ts_resultados[nome_vencedora],
@@ -75,7 +76,7 @@ def exibir_resultado(resultado):
         print("⚠️  Todas as técnicas estão enviesadas! Escolhendo a menos enviesada:")
     
     print(f"🏆 TÉCNICA VENCEDORA: {resultado['vencedora']} "
-          f"(MAPE: {resultado['mape']:.2f}% | TS: {resultado['ts_final']:.2f})")
+          f"(MAD: {resultado['mad']:.2f} | MAPE: {resultado['mape']:.2f}% | TS: {resultado['ts_final']:.2f})")
     
     ts = resultado["ts_detalhes"]
     print(f"\n--- SINAL DE RASTREAMENTO: {resultado['vencedora']} ---")

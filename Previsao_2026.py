@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 from torneio import executar_torneio
 from funções.PREVISAO import gerar_previsao
-from funções.TRATAMENTO import tratar_anomalias_demanda
+from funções.TRATAMENTO import tratar_anomalias_demanda, analisar_anomalias
 
 # ============================================================
 #  PREVISÃO DE DEMANDA — JANEIRO A JULHO DE 2026
@@ -26,13 +26,48 @@ todas_previsoes = {'Mês': [m.title() for m in meses_previsao]}
 resumo_tecnicas = []
 dados_grafico = {}
 
+# Override manual por linha — justificado tecnicamente
+# L4: Holt-Winters tem MAD 17% menor e MAPE 30% menor que o Holt Duplo
+#     (vencedor pelo MAD entre os não-enviesados). O Holt Duplo produz uma
+#     projeção linear, equivalente à Regressão Linear, pouco informativa para
+#     uma série com sazonalidade. O viés do Holt-Winters é parcialmente
+#     explicado por um único ponto excepcional (nov/25), aceito como exceção.
+FORCAS_TECNICA = {
+    'L4': 'Holt-Winters'
+}
+
 for linha in ['L1', 'L2', 'L3', 'L4', 'L5']:
     demandas_orig = df[linha].tolist()
+
+    # --- Análise de anomalias (justificativa técnica do tratamento) ---
+    rel = analisar_anomalias(demandas_orig)
+    if rel['n_outliers'] > 0:
+        meses_out = [m + 1 for m in rel['indices_outliers']]
+        print(f"  ⚠️  {linha}: {rel['n_outliers']} outlier(s) no(s) mês(es) {meses_out} "
+              f"→ substituídos pela mediana (método IQR)")
+    if rel['level_shift']:
+        print(f"  ⚠️  {linha}: Level shift detectado no mês {rel['ponto_shift'] + 1} "
+              f"→ série ajustada ao novo patamar")
+    if rel['n_outliers'] == 0 and not rel['level_shift']:
+        print(f"  ✅  {linha}: sem anomalias detectadas — série usada sem alteração")
+
     demandas = tratar_anomalias_demanda(demandas_orig)
     
     # Torneio + seleção da técnica sem viés
     resultado = executar_torneio(demandas, n_mms=3, alpha=0.3)
-    nome_vencedora = resultado['vencedora']
+
+    # Override manual (se configurado para esta linha)
+    if linha in FORCAS_TECNICA:
+        nome_vencedora = FORCAS_TECNICA[linha]
+        tab = resultado['tabela']
+        st  = tab[tab['Técnica'] == nome_vencedora].iloc[0]
+        resultado['mad']      = st['MAD']
+        resultado['mape']     = st['MAPE (%)']
+        resultado['ts_final'] = st['TS']
+        print(f"  📌 {linha}: técnica forçada → {nome_vencedora} "
+              f"(MAD={resultado['mad']:.0f} | viés aceito — Holt Duplo gera projeção linear)")
+    else:
+        nome_vencedora = resultado['vencedora']
     
     # Previsão de 7 meses
     previsoes_futuras = gerar_previsao(nome_vencedora, demandas, horizonte=7, n_mms=3, alpha=0.3)
@@ -41,11 +76,14 @@ for linha in ['L1', 'L2', 'L3', 'L4', 'L5']:
     resumo_tecnicas.append({
         'Linha': linha,
         'Técnica Vencedora': nome_vencedora,
+        'MAD': f"{resultado['mad']:.2f}",
         'MAPE (%)': f"{resultado['mape']:.2f}",
         'TS Final': f"{resultado['ts_final']:.2f}"
     })
     dados_grafico[linha] = {
-        'real': demandas_orig,
+        'real':      demandas,        # série tratada (usada no modelo e no gráfico)
+        'real_orig': demandas_orig,    # série bruta (exibida como referência quando houve tratamento)
+        'tratado':   rel['n_outliers'] > 0 or rel['level_shift'],
         'previsao_historica': resultado['previsoes'][nome_vencedora],
         'previsao_futura': previsoes_futuras,
         'tecnica': nome_vencedora
@@ -98,10 +136,16 @@ for linha in ['L1', 'L2', 'L3', 'L4', 'L5']:
     fig.patch.set_facecolor('#F8F9FA')
     ax.set_facecolor('#FFFFFF')
 
-    # --- dados reais ---
+    # --- série bruta (fundo, apenas quando houve tratamento) ---
+    if dados['tratado']:
+        ax.plot(x_real, dados['real_orig'],
+                color='#AAAAAA', linewidth=1.2, linestyle=':', alpha=0.6,
+                label='Original (bruto)', zorder=2)
+
+    # --- dados tratados (série usada no modelo) ---
     ax.plot(x_real, real,
             color='#1A1A2E', marker='o', markersize=5, linewidth=2.2,
-            label='Real (histórico)', zorder=3)
+            label='Real tratado', zorder=3)
 
     # --- linha de previsão (histórica + futura) ---
     ax.plot(x_prev, y_prev_completa,
@@ -123,7 +167,8 @@ for linha in ['L1', 'L2', 'L3', 'L4', 'L5']:
 
     # --- formatação ---
     ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _: f'{v:,.0f}'))
-    ax.set_title(f'Linha {linha} — Demanda Real vs Previsão  (Jan/2024 – Jul/2026)',
+    sufixo = '  [série tratada]' if dados['tratado'] else ''
+    ax.set_title(f'Linha {linha} — Demanda Real vs Previsão  (Jan/2024 – Jul/2026){sufixo}',
                  fontsize=13, fontweight='bold', pad=12, color='#1A1A2E')
     ax.set_xlabel('Mês', fontsize=10)
     ax.set_ylabel('Demanda (unidades)', fontsize=10)
@@ -165,8 +210,12 @@ for i, linha in enumerate(['L1', 'L2', 'L3', 'L4', 'L5']):
     y_prev_completa = prev_hist + prev_fut
 
     ax.set_facecolor('#FFFFFF')
+    if dados['tratado']:
+        ax.plot(x_real, dados['real_orig'],
+                color='#AAAAAA', linewidth=1.0, linestyle=':', alpha=0.5,
+                label='Original (bruto)', zorder=2)
     ax.plot(x_real, real,
-            color='#1A1A2E', marker='o', markersize=4, linewidth=2, label='Real (histórico)', zorder=3)
+            color='#1A1A2E', marker='o', markersize=4, linewidth=2, label='Real tratado', zorder=3)
     ax.plot(x_prev, y_prev_completa,
             color=cor, marker='s', markersize=4, linewidth=2,
             linestyle='--', alpha=0.85, label=f'Previsão ({dados["tecnica"]})', zorder=3)

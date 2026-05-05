@@ -8,7 +8,7 @@ import matplotlib.ticker as mticker
 
 from torneio import executar_torneio
 from funções.PREVISAO import gerar_previsao
-from funções.TRATAMENTO import tratar_anomalias_demanda
+from funções.TRATAMENTO import tratar_anomalias_demanda, analisar_anomalias
 
 # ============================================================
 #  PLANO AGREGADO — MONTAGEM (T&E)  —  Jan/2026 a Jul/2026
@@ -24,15 +24,34 @@ df_param = pd.read_csv('dataset/trabalho_parametros.csv', index_col=0)
 df_hist  = pd.read_csv('dataset/trabalho_demanda.csv')
 linhas   = ['L1', 'L2', 'L3', 'L4', 'L5']
 
+# Override manual por linha — espelha a mesma decisão de Previsao_2026.py
+# L4: Holt-Winters preferido ao Holt Duplo (que gera projeção linear)
+FORCAS_TECNICA = {'L4': 'Holt-Winters'}
+
 # ── Gerar previsões via torneio ───────────────────────────────
 previsoes = {}
 tecnicas  = {}
 for linha in linhas:
     demandas_orig = df_hist[linha].tolist()
+
+    # Análise de anomalias (justificativa técnica)
+    rel = analisar_anomalias(demandas_orig)
+    if rel['n_outliers'] > 0:
+        meses_out = [m + 1 for m in rel['indices_outliers']]
+        print(f"  ⚠️  {linha}: {rel['n_outliers']} outlier(s) no(s) mês(es) {meses_out} → tratados (IQR)")
+    if rel['level_shift']:
+        print(f"  ⚠️  {linha}: level shift no mês {rel['ponto_shift'] + 1} → série ajustada")
+
     demandas      = tratar_anomalias_demanda(demandas_orig)
     resultado     = executar_torneio(demandas, n_mms=3, alpha=0.3)
-    nome_venc     = resultado['vencedora']
-    prev_fut      = gerar_previsao(nome_venc, demandas, horizonte=T, n_mms=3, alpha=0.3)
+
+    # Override manual (se configurado para esta linha)
+    if linha in FORCAS_TECNICA:
+        nome_venc = FORCAS_TECNICA[linha]
+    else:
+        nome_venc = resultado['vencedora']
+
+    prev_fut         = gerar_previsao(nome_venc, demandas, horizonte=T, n_mms=3, alpha=0.3)
     previsoes[linha] = [round(v) for v in prev_fut]
     tecnicas[linha]  = nome_venc
 
@@ -52,7 +71,7 @@ def _params(linha):
         'cn': float(p['custo_normal']),
         'ce': float(p['custo_extra']),
         'cs': float(p['custo_subcontratacao']),
-        'ch': float(p['custo_estoque']),
+        'ch': float(p['custo_estoque']),   # ch = Ci (custo de manutenção de estoque/inventário)
         'produto': p['produtos'],
     }
 
@@ -62,8 +81,10 @@ def _simular(D, cap_n, cap_e, sub_max, est_ini, est_min,
     Simula um período. Se X_fixo[t] é dado, usa como produção normal (Level/Mista).
     Se X_fixo é None (Chase), calcula X_t = min(need, cap_n).
     Horas extras e subcontratação completam quando X < necessidade.
+    Déficits reais (capacidade insuficiente para atender D + est_min) são registrados
+    separadamente em DEF_out e não são mascarados.
     """
-    X_out, O_out, S_out, E_out, EI_out = [], [], [], [], []
+    X_out, O_out, S_out, E_out, EI_out, DEF_out = [], [], [], [], [], []
     ei = est_ini
 
     for t in range(T):
@@ -82,14 +103,21 @@ def _simular(D, cap_n, cap_e, sub_max, est_ini, est_min,
         restante -= ot
         st = min(restante, sub_max)
 
-        ef = max(ei + xt + ot + st - D[t], est_min)
+        # Equação de balanço: EF = EI + X + O + S − D
+        ef_natural = ei + xt + ot + st - D[t]
+        # Déficit: quanto falta para atingir est_min com os recursos disponíveis
+        deficit_t  = max(0.0, est_min - ef_natural)
+        # EF respeita est_min como restrição (déficit registrado separadamente)
+        ef = max(ef_natural, est_min)
 
-        X_out.append(xt); O_out.append(ot); S_out.append(st); E_out.append(ef)
+        X_out.append(xt); O_out.append(ot); S_out.append(st)
+        E_out.append(ef); DEF_out.append(deficit_t)
         ei = ef
 
+    # Custo total: Σ(Cn·X + Ce·O + Cs·S + Ci·I)  [ch = Ci = custo de inventário]
     custo = sum(X_out[t]*cn + O_out[t]*ce + S_out[t]*cs + E_out[t]*ch
                 for t in range(T))
-    return X_out, O_out, S_out, E_out, EI_out, custo
+    return X_out, O_out, S_out, E_out, EI_out, custo, DEF_out
 
 
 def estrategia_chase(linha):
@@ -100,9 +128,9 @@ def estrategia_chase(linha):
     """
     p = _params(linha)
     D = previsoes[linha]
-    X, O, S, E, EI, custo = _simular(D, **{k: p[k] for k in
+    X, O, S, E, EI, custo, DEF = _simular(D, **{k: p[k] for k in
         ['cap_n','cap_e','sub_max','est_ini','est_min','cn','ce','cs','ch']})
-    return dict(X=X, O=O, S=S, E=E, EI=EI, D=D, custo_total=custo, **p)
+    return dict(X=X, O=O, S=S, E=E, EI=EI, D=D, DEF=DEF, custo_total=custo, **p)
 
 
 def estrategia_level(linha):
@@ -115,10 +143,10 @@ def estrategia_level(linha):
     D = previsoes[linha]
     P = p['cap_n']              # produção normal constante = capacidade total normal
     X_fixo = [P] * T
-    X, O, S, E, EI, custo = _simular(D, **{k: p[k] for k in
+    X, O, S, E, EI, custo, DEF = _simular(D, **{k: p[k] for k in
         ['cap_n','cap_e','sub_max','est_ini','est_min','cn','ce','cs','ch']},
         X_fixo=X_fixo)
-    return dict(X=X, O=O, S=S, E=E, EI=EI, D=D, custo_total=custo,
+    return dict(X=X, O=O, S=S, E=E, EI=EI, D=D, DEF=DEF, custo_total=custo,
                 P_constante=P, **p)
 
 
@@ -131,14 +159,12 @@ def estrategia_mista(linha):
     """
     p = _params(linha)
     D = previsoes[linha]
-    # Nível base: menor entre Cap_n e a média das demandas (garante que
-    # Produção normal não supere a capacidade nem desperdice capacidade ociosa).
     P_base = min(p['cap_n'], round(float(np.mean(D))))
     X_fixo = [float(P_base)] * T
-    X, O, S, E, EI, custo = _simular(D, **{k: p[k] for k in
+    X, O, S, E, EI, custo, DEF = _simular(D, **{k: p[k] for k in
         ['cap_n','cap_e','sub_max','est_ini','est_min','cn','ce','cs','ch']},
         X_fixo=X_fixo)
-    return dict(X=X, O=O, S=S, E=E, EI=EI, D=D, custo_total=custo,
+    return dict(X=X, O=O, S=S, E=E, EI=EI, D=D, DEF=DEF, custo_total=custo,
                 P_base=P_base, **p)
 
 
@@ -185,6 +211,7 @@ def imprimir_planilha(nome_estrategia, linha_dados):
         for t in range(T):
             custo_t = (r['X'][t]*r['cn'] + r['O'][t]*r['ce'] +
                        r['S'][t]*r['cs'] + r['E'][t]*r['ch'])
+            def_t   = int(round(r['DEF'][t]))
             rows.append({
                 'Mês':          MESES[t],
                 'Demanda':      int(round(r['D'][t])),
@@ -193,6 +220,7 @@ def imprimir_planilha(nome_estrategia, linha_dados):
                 'H.Extra':      int(round(r['O'][t])),
                 'Subcontr.':    int(round(r['S'][t])),
                 'EF':           int(round(r['E'][t])),
+                'Déficit':      def_t if def_t > 0 else '-',
                 'Custo(R$)':    f"R$ {custo_t:,.2f}"
             })
 
