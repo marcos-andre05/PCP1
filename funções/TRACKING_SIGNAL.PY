@@ -1,6 +1,6 @@
 import numpy as np
 
-def calcular_tracking_signal(y_true, y_pred, limite=4):
+def calcular_tracking_signal(y_true, y_pred, limite=3):
     """
     Calcula o Sinal de Rastreamento (Tracking Signal) para validar viés da previsão.
     
@@ -10,7 +10,7 @@ def calcular_tracking_signal(y_true, y_pred, limite=4):
         MAD  = Desvio Absoluto Médio Acumulado
     
     Interpretação:
-        Se |TS| > limite (geralmente ±4), a previsão está enviesada.
+        Se |TS| > limite (geralmente ±3), a previsão está enviesada.
         TS positivo = previsão subestima (demanda real > previsão)
         TS negativo = previsão superestima (demanda real < previsão)
     """

@@ -73,58 +73,117 @@ print(f"  Total geral previsto (Jan-Jul 2026): {df_prev['Total'].sum():,.0f} uni
 print(f"{'=' * 70}")
 
 # ============================================================
-#  GRÁFICO: REAL vs PREVISTO
+#  GRÁFICOS INDIVIDUAIS: um por linha de produção
 # ============================================================
 
-fig, axes = plt.subplots(5, 1, figsize=(12, 14), sharex=True)
-fig.suptitle('Demanda Real vs Previsão — Jan/2024 a Jul/2026', fontsize=14, fontweight='bold', y=0.98)
-
 cores = {'L1': '#2196F3', 'L2': '#4CAF50', 'L3': '#FF9800', 'L4': '#9C27B0', 'L5': '#F44336'}
+labels_x = [m.title() for m in todos_meses]
 
-for i, linha in enumerate(['L1', 'L2', 'L3', 'L4', 'L5']):
-    ax = axes[i]
-    dados = dados_grafico[linha]
-    real = dados['real']
+print()
+for linha in ['L1', 'L2', 'L3', 'L4', 'L5']:
+    dados   = dados_grafico[linha]
+    real     = dados['real']
     prev_hist = dados['previsao_historica']
-    prev_fut = dados['previsao_futura']
-    cor = cores[linha]
-    
+    prev_fut  = dados['previsao_futura']
+    cor       = cores[linha]
+
     n_hist = len(real)
-    n_fut = len(prev_fut)
-    
+    n_fut  = len(prev_fut)
+
     x_real = list(range(n_hist))
     x_prev = list(range(n_hist + n_fut))
     y_prev_completa = prev_hist + prev_fut
-    
-    # Definindo cores diferentes para Real e Previsão
-    cor_real = 'black'  # Cor neutra/escura para a demanda real
-    cor_prev = cor      # Cor vibrante específica da linha para a previsão
-    
-    # Linha real
-    ax.plot(x_real, real, color=cor_real, marker='o', markersize=4, linewidth=2, label='Real (histórico)')
-    
-    # Linha de previsão
-    ax.plot(x_prev, y_prev_completa, color=cor_prev, marker='s', markersize=4, linewidth=2,
-            linestyle='--', alpha=0.8, label=f'Previsão ({dados["tecnica"]})')
-    
-    # Área sombreada na zona de previsão
-    ax.axvspan(n_hist - 0.5, n_hist + 6.5, alpha=0.08, color=cor)
-    
-    # Linha divisória
-    ax.axvline(x=n_hist - 0.5, color='gray', linestyle=':', alpha=0.5)
-    
-    ax.set_ylabel(f'Linha {linha[-1]}', fontsize=11, fontweight='bold')
-    ax.legend(loc='upper left', fontsize=8)
-    ax.grid(True, alpha=0.3)
-    ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda x, p: f'{x:,.0f}'))
 
-# Configurar eixo X com nomes dos meses
-labels_x = [m.title() for m in todos_meses]
+    fig, ax = plt.subplots(figsize=(13, 5))
+    fig.patch.set_facecolor('#F8F9FA')
+    ax.set_facecolor('#FFFFFF')
+
+    # --- dados reais ---
+    ax.plot(x_real, real,
+            color='#1A1A2E', marker='o', markersize=5, linewidth=2.2,
+            label='Real (histórico)', zorder=3)
+
+    # --- linha de previsão (histórica + futura) ---
+    ax.plot(x_prev, y_prev_completa,
+            color=cor, marker='s', markersize=5, linewidth=2.2,
+            linestyle='--', alpha=0.9,
+            label=f'Previsão ({dados["tecnica"]})', zorder=3)
+
+    # --- área sombreada da zona de previsão ---
+    ax.axvspan(n_hist - 0.5, n_hist + n_fut - 0.5, alpha=0.07, color=cor, zorder=1)
+
+    # --- linha divisória histórico / previsão ---
+    ax.axvline(x=n_hist - 0.5, color='gray', linestyle=':', linewidth=1.2, alpha=0.6)
+    ax.text(n_hist - 0.4, ax.get_ylim()[0] if ax.get_ylim()[0] else 0,
+            '◀ Histórico  Previsão ▶', fontsize=7.5, color='gray', va='bottom')
+
+    # --- eixo X ---
+    ax.set_xticks(range(len(labels_x)))
+    ax.set_xticklabels(labels_x, rotation=45, ha='right', fontsize=8.5)
+
+    # --- formatação ---
+    ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _: f'{v:,.0f}'))
+    ax.set_title(f'Linha {linha} — Demanda Real vs Previsão  (Jan/2024 – Jul/2026)',
+                 fontsize=13, fontweight='bold', pad=12, color='#1A1A2E')
+    ax.set_xlabel('Mês', fontsize=10)
+    ax.set_ylabel('Demanda (unidades)', fontsize=10)
+    ax.legend(loc='upper left', fontsize=9, framealpha=0.85)
+    ax.grid(True, alpha=0.25, linestyle='--')
+
+    for spine in ax.spines.values():
+        spine.set_edgecolor('#CCCCCC')
+
+    plt.tight_layout()
+
+    nome_arquivo = f'grafico_{linha}.png'
+    plt.savefig(nome_arquivo, dpi=120, bbox_inches='tight')
+    plt.show()
+    print(f"  📊 Gráfico da {linha} salvo em: {nome_arquivo}")
+
+# ============================================================
+#  GRÁFICO CONSOLIDADO (todas as linhas juntas)
+# ============================================================
+
+fig, axes = plt.subplots(5, 1, figsize=(13, 16), sharex=True)
+fig.patch.set_facecolor('#F8F9FA')
+fig.suptitle('Demanda Real vs Previsão — Jan/2024 a Jul/2026',
+             fontsize=14, fontweight='bold', y=0.995, color='#1A1A2E')
+
+for i, linha in enumerate(['L1', 'L2', 'L3', 'L4', 'L5']):
+    ax    = axes[i]
+    dados = dados_grafico[linha]
+    real     = dados['real']
+    prev_hist = dados['previsao_historica']
+    prev_fut  = dados['previsao_futura']
+    cor       = cores[linha]
+
+    n_hist = len(real)
+    n_fut  = len(prev_fut)
+
+    x_real = list(range(n_hist))
+    x_prev = list(range(n_hist + n_fut))
+    y_prev_completa = prev_hist + prev_fut
+
+    ax.set_facecolor('#FFFFFF')
+    ax.plot(x_real, real,
+            color='#1A1A2E', marker='o', markersize=4, linewidth=2, label='Real (histórico)', zorder=3)
+    ax.plot(x_prev, y_prev_completa,
+            color=cor, marker='s', markersize=4, linewidth=2,
+            linestyle='--', alpha=0.85, label=f'Previsão ({dados["tecnica"]})', zorder=3)
+    ax.axvspan(n_hist - 0.5, n_hist + n_fut - 0.5, alpha=0.07, color=cor, zorder=1)
+    ax.axvline(x=n_hist - 0.5, color='gray', linestyle=':', linewidth=1, alpha=0.5)
+    ax.set_ylabel(f'Linha {linha[-1]}', fontsize=11, fontweight='bold', color=cor)
+    ax.legend(loc='upper left', fontsize=7.5, framealpha=0.8)
+    ax.grid(True, alpha=0.2, linestyle='--')
+    ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _: f'{v:,.0f}'))
+    for spine in ax.spines.values():
+        spine.set_edgecolor('#CCCCCC')
+
 axes[-1].set_xticks(range(len(labels_x)))
 axes[-1].set_xticklabels(labels_x, rotation=45, ha='right', fontsize=8)
 axes[-1].set_xlabel('Mês', fontsize=11)
 
-plt.tight_layout(rect=[0, 0, 1, 0.96])
-plt.savefig('previsao_2026_real_vs_previsto.png', dpi=100, bbox_inches='tight')
+plt.tight_layout(rect=[0, 0, 1, 0.993])
+plt.savefig('previsao_2026_consolidado.png', dpi=120, bbox_inches='tight')
 plt.show()
-print("\n📊 Gráfico salvo em: previsao_2026_real_vs_previsto.png")
+print("\n📊 Gráfico consolidado salvo em: previsao_2026_consolidado.png")

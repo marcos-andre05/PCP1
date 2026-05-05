@@ -1,4 +1,5 @@
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
+
 def modelo_holt(demandas):
     # 'add' significa tendência aditiva
     modelo = ExponentialSmoothing(demandas, trend='add', seasonal=None, initialization_method="estimated")
