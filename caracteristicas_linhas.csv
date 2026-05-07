@@ -1,0 +1,6 @@
+﻿Linha,Produto,Média (un),CV (%),Tendência,p-valor Tend.,R²,Sazonalidade,ACF Lag-12,Lim. ACF,Estacionária,ADF p-valor,Level Shift,Outliers (IQR)
+L1,Discos de Freio,27453,12.1,Crescente,0.0,0.72,Não,-0.072,0.4,Não,0.9963,Não,0
+L2,Cubos de Roda,13985,17.9,Estável,0.6174,0.012,Não,-0.395,0.4,Sim,0.0005,Não,2
+L3,Tambores de Freio,61115,17.3,Estável,0.1234,0.104,Sim,0.439,0.4,Sim,0.0003,Não,0
+L4,Flanges Industriais,192628,20.1,Crescente,0.0,0.64,Não,-0.254,0.4,Não,0.6203,Não,0
+L5,Suportes Metálicos,13203,23.8,Crescente,0.0,0.823,Não,-0.385,0.4,Não,0.9063,Sim,0

@@ -246,6 +246,7 @@ print(f"  {'─'*70}")
 
 totais = {'Chase': 0, 'Level': 0, 'Mista': 0}
 vencedoras_linha = {}
+linhas_csv_custos = []
 
 for linha in linhas:
     custos_linha = {e: resultados[linha][e]['custo_total'] for e in estrategias}
@@ -256,6 +257,15 @@ for linha in linhas:
     c_chase = custos_linha['Chase']
     c_level = custos_linha['Level']
     c_mista = custos_linha['Mista']
+    
+    linhas_csv_custos.append({
+        'Linha': linha,
+        'Produto': produto,
+        'Custo Chase (R$)': c_chase,
+        'Custo Level (R$)': c_level,
+        'Custo Mista (R$)': c_mista,
+        'Melhor Estratégia': melhor
+    })
 
     def fmt(v, melhor_v):
         s = f"R$ {v:,.0f}"
@@ -267,6 +277,10 @@ for linha in linhas:
 
     for e in estrategias:
         totais[e] += custos_linha[e]
+
+df_comparativo_custos = pd.DataFrame(linhas_csv_custos)
+df_comparativo_custos.to_csv('comparativo_custos_plano_agregado.csv', index=False, encoding='utf-8-sig')
+print("\n  Tabela exportada: comparativo_custos_plano_agregado.csv")
 
 print(f"  {'─'*70}")
 melhor_global = min(totais, key=totais.get)

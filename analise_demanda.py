@@ -82,36 +82,35 @@ fig_diag.suptitle('Diagnóstico de Anomalias (Limites IQR e Level Shift)', fonts
 for i, (col, ax) in enumerate(zip(colunas, axes_diag)):
     demandas_brutas = df[col].tolist()
     rel = analisar_anomalias(demandas_brutas)
-    
-    ax.plot(df.index, demandas_brutas, marker='o', linestyle='-', color=cores[i], linewidth=2, label='Bruta', zorder=2)
-    
-    # Plot IQR limits
-    ax.axhline(y=rel['limite_sup'], color='red', linestyle='--', linewidth=1.5, alpha=0.7, label='Limite Sup. IQR', zorder=1)
-    ax.axhline(y=rel['limite_inf'], color='blue', linestyle='--', linewidth=1.5, alpha=0.7, label='Limite Inf. IQR', zorder=1)
-    
-    # Highlight outliers
+
+    # Série bruta — sem qualquer modificação
+    ax.plot(df.index, demandas_brutas, marker='o', linestyle='-', color=cores[i], linewidth=2, label='Demanda Bruta', zorder=2)
+
+    # Limites IQR (apenas linhas horizontais de referência)
+    ax.axhline(y=rel['limite_sup'], color='red',  linestyle='--', linewidth=1.5, alpha=0.7, label=f"Limite Sup. IQR ({rel['limite_sup']:,.0f})")
+    ax.axhline(y=rel['limite_inf'], color='blue', linestyle='--', linewidth=1.5, alpha=0.7, label=f"Limite Inf. IQR ({rel['limite_inf']:,.0f})")
+
+    # Marcação de outliers com 'X' — sem substituição de valor
     if rel['n_outliers'] > 0:
         for idx in rel['indices_outliers']:
-            ax.plot(df.index[idx], demandas_brutas[idx], marker='x', color='red', markersize=10, markeredgewidth=2, zorder=3)
-            
-    # Plot Level Shift
+            ax.plot(df.index[idx], demandas_brutas[idx],
+                    marker='x', color='red', markersize=12,
+                    markeredgewidth=2.5, zorder=4, label='Outlier (IQR)')
+
+    # Linha vertical no ponto de level shift detectado — sem ajuste de médias
     if rel['level_shift']:
         ponto = rel['ponto_shift']
-        ax.axvline(x=df.index[ponto], color='purple', linestyle=':', linewidth=2, alpha=0.8, label='Ponto Level Shift', zorder=1)
-        # Plot media_ant
-        ax.plot(df.index[:ponto], [rel['media_ant']]*ponto, color='green', linestyle='--', linewidth=2, label='Média Antes', zorder=1)
-        # Plot media_post
-        ax.plot(df.index[ponto:], [rel['media_post']]*(len(demandas_brutas)-ponto), color='orange', linestyle='--', linewidth=2, label='Média Depois', zorder=1)
+        ax.axvline(x=df.index[ponto], color='purple', linestyle=':',
+                   linewidth=2, alpha=0.8, label=f'Level Shift (período {ponto + 1})')
 
     ax.set_title(nomes_linhas[i] + ' (Diagnóstico)', fontsize=12, fontweight='bold')
     ax.set_ylabel('Volume (un)', fontsize=10)
     ax.grid(True, linestyle='--', alpha=0.6)
-    
-    # Avoid duplicate labels in legend
+
+    # Legenda sem rótulos duplicados
     handles, labels = ax.get_legend_handles_labels()
     by_label = dict(zip(labels, handles))
-    if len(by_label) > 1: # Only show legend if there's more than just 'Bruta'
-        ax.legend(by_label.values(), by_label.keys(), loc='upper left')
+    ax.legend(by_label.values(), by_label.keys(), loc='upper left', fontsize=8)
 
 axes_diag[-1].set_xlabel('Períodos (Meses de 1 a 24)', fontsize=12)
 axes_diag[-1].set_xticks(df.index)
@@ -121,4 +120,5 @@ plt.tight_layout(rect=[0, 0.03, 1, 0.90])
 plt.savefig('grafico_historico_demanda_diagnostico.png', dpi=300, bbox_inches='tight')
 
 print("Gráficos de análise de demanda gerados e salvos (incluindo diagnóstico).")
-
+plt.show()
+

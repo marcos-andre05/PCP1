@@ -106,6 +106,8 @@ print("  📅 PREVISÃO CONSOLIDADA — JAN/2026 A JUL/2026")
 print(f"{'─' * 70}")
 print(df_prev.to_string(index=False))
 
+df_prev.to_csv('previsao_2026_resultados.csv', index=False, encoding='utf-8-sig')
+print("\n  Tabela exportada: previsao_2026_resultados.csv")
 print(f"\n{'=' * 70}")
 print(f"  Total geral previsto (Jan-Jul 2026): {df_prev['Total'].sum():,.0f} unidades")
 print(f"{'=' * 70}")
