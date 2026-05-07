@@ -5,22 +5,21 @@ import matplotlib.pyplot as plt
 # Certifique-se de que o arquivo CSV esteja na pasta 'dataset' conforme o roteiro
 try:
     df = pd.read_csv('dataset/trabalho_demanda.csv')
+    df_param = pd.read_csv('dataset/trabalho_parametros.csv', index_col=0)
 except FileNotFoundError:
     print("Erro: Arquivo não encontrado. Verifique se o caminho 'dataset/trabalho_demanda.csv' está correto.")
-fig, axes = plt.subplots(nrows=5, ncols=1, figsize=(12, 18), sharex=True)
+
+# Leitura dinâmica das colunas e mapeamento dos produtos
+colunas = df.columns[1:].tolist()
+produtos_map = df_param.loc['produtos'].to_dict()
+nomes_linhas = [f"{col}: {produtos_map.get(col, 'Produto ' + col)}" for col in colunas]
+
+from funções.UTILS import obter_cores_dinamicas
+cores = obter_cores_dinamicas(len(colunas))
+
+fig, axes = plt.subplots(nrows=len(colunas), ncols=1, figsize=(12, max(4, 3.5 * len(colunas))), sharex=True)
+if len(colunas) == 1: axes = [axes] # Garante que axes seja iterável
 fig.suptitle('Comportamento Histórico da Demanda (2024-2025)', fontsize=16, y=0.92)
-
-# Nomes das linhas para os títulos
-nomes_linhas = [
-    'L1: Discos de Freio', 
-    'L2: Cubos de Roda', 
-    'L3: Tambores de Freio', 
-    'L4: Flanges Industriais', 
-    'L5: Suportes Metálicos'
-]
-
-colunas = ['L1', 'L2', 'L3', 'L4', 'L5']
-cores = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']
 
 # 3. Plotagem iterativa para cada linha de produção
 for i, (col, ax) in enumerate(zip(colunas, axes)):
@@ -28,11 +27,6 @@ for i, (col, ax) in enumerate(zip(colunas, axes)):
     ax.set_title(nomes_linhas[i], fontsize=12, fontweight='bold')
     ax.set_ylabel('Volume (un)', fontsize=10)
     ax.grid(True, linestyle='--', alpha=0.6)
-    
-    # Destacando pontos atípicos visualmente (ex: outliers e mudanças bruscas)
-    if col == 'L2':
-        ax.annotate('Outlier provável', xy=(15, 6928), xytext=(16, 10000),
-                    arrowprops=dict(facecolor='black', arrowstyle='->'), fontsize=9)
 
 # Configuração do eixo X (Meses)
 axes[-1].set_xlabel('Períodos (Meses de 1 a 24)', fontsize=12)
@@ -49,7 +43,8 @@ plt.savefig('grafico_historico_demanda.png', dpi=300, bbox_inches='tight')
 # ==========================================================
 from funções.TRATAMENTO import tratar_anomalias_demanda
 
-fig_trat, axes_trat = plt.subplots(nrows=5, ncols=1, figsize=(12, 18), sharex=True)
+fig_trat, axes_trat = plt.subplots(nrows=len(colunas), ncols=1, figsize=(12, max(4, 3.5 * len(colunas))), sharex=True)
+if len(colunas) == 1: axes_trat = [axes_trat]
 fig_trat.suptitle('Comportamento Histórico da Demanda Tratada (2024-2025)', fontsize=16, y=0.92)
 
 for i, (col, ax) in enumerate(zip(colunas, axes_trat)):
@@ -76,7 +71,8 @@ plt.savefig('grafico_historico_demanda_tratada.png', dpi=300, bbox_inches='tight
 # ==========================================================
 from funções.TRATAMENTO import analisar_anomalias
 
-fig_diag, axes_diag = plt.subplots(nrows=5, ncols=1, figsize=(12, 18), sharex=True)
+fig_diag, axes_diag = plt.subplots(nrows=len(colunas), ncols=1, figsize=(12, max(4, 3.5 * len(colunas))), sharex=True)
+if len(colunas) == 1: axes_diag = [axes_diag]
 fig_diag.suptitle('Diagnóstico de Anomalias (Limites IQR e Level Shift)', fontsize=16, y=0.92)
 
 for i, (col, ax) in enumerate(zip(colunas, axes_diag)):

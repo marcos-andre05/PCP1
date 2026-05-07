@@ -5,10 +5,9 @@ from funções.TRATAMENTO import tratar_anomalias_demanda
 # 1. Tabelas de métricas de erro por linha e 2. Tabela de vencedoras
 print("Gerando tabelas de métricas de erro e vencedoras...")
 df = pd.read_csv('dataset/trabalho_demanda.csv')
-linhas = ['L1', 'L2', 'L3', 'L4', 'L5']
+linhas = df.columns[1:].tolist()
 
 vencedoras = []
-FORCAS_TECNICA = {'L4': 'Holt-Winters'}
 
 for linha in linhas:
     demandas_orig = df[linha].tolist()
@@ -22,13 +21,8 @@ for linha in linhas:
     print(f"  Tabela gerada: {nome_arquivo}")
     
     # Lógica de vencedora
-    if linha in FORCAS_TECNICA:
-        nome_venc = FORCAS_TECNICA[linha]
-        st = df_resultados[df_resultados['Técnica'] == nome_venc].iloc[0]
-        mad, mape, ts_final = st['MAD'], st['MAPE (%)'], st['TS']
-    else:
-        nome_venc = resultado['vencedora']
-        mad, mape, ts_final = resultado['mad'], resultado['mape'], resultado['ts_final']
+    nome_venc = resultado['vencedora']
+    mad, mape, ts_final = resultado['mad'], resultado['mape'], resultado['ts_final']
         
     vencedoras.append({
         'Linha': linha,

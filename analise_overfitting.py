@@ -58,10 +58,11 @@ def split_e_prever(demandas, n_treino):
 # é drasticamente menor que o da segunda metade, ou simplesmente dividir a série.
 def analisar_overfitting():
     df = pd.read_csv('dataset/trabalho_demanda.csv')
-    linhas = ['L1', 'L2', 'L3', 'L4', 'L5']
+    linhas = df.columns[1:].tolist()
     
-    n_treino = 18 # 75% da série de 24 meses
-    n_teste = 24 - n_treino
+    n_total = len(df)
+    n_treino = int(n_total * 0.75) # 75% da série
+    n_teste = n_total - n_treino
     
     resultados = []
     
@@ -80,7 +81,7 @@ def analisar_overfitting():
         for nome, prev in previsoes.items():
             # Filtra os None (comuns no começo de MMS, etc.)
             valido_treino = [(demandas[i], prev[i]) for i in range(n_treino) if prev[i] is not None]
-            valido_teste = [(demandas[i], prev[i]) for i in range(n_treino, 24) if prev[i] is not None]
+            valido_teste = [(demandas[i], prev[i]) for i in range(n_treino, n_total) if prev[i] is not None]
             
             if valido_treino and valido_teste:
                 real_tr = [x[0] for x in valido_treino]

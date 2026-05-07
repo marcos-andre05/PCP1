@@ -19,15 +19,11 @@ from funções.TRATAMENTO import analisar_anomalias
 
 # ── 1. Dados ────────────────────────────────────────────────────────────────
 df = pd.read_csv('dataset/trabalho_demanda.csv')
+df_param = pd.read_csv('dataset/trabalho_parametros.csv', index_col=0)
 
-colunas = ['L1', 'L2', 'L3', 'L4', 'L5']
-nomes = {
-    'L1': 'Discos de Freio',
-    'L2': 'Cubos de Roda',
-    'L3': 'Tambores de Freio',
-    'L4': 'Flanges Industriais',
-    'L5': 'Suportes Metálicos',
-}
+colunas = df.columns[1:].tolist()
+produtos_map = df_param.loc['produtos'].to_dict()
+nomes = {col: produtos_map.get(col, f'Produto {col}') for col in colunas}
 
 # ── 2. Análise por linha ─────────────────────────────────────────────────────
 resultados = []

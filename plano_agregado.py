@@ -16,17 +16,14 @@ from funções.TRATAMENTO import tratar_anomalias_demanda, analisar_anomalias
 #  Custo: Σ(Cn·Xt + Ce·Ot + Cs·St + Ci·It)
 # ============================================================
 
-MESES = ['Jan/26', 'Fev/26', 'Mar/26', 'Abr/26', 'Mai/26', 'Jun/26', 'Jul/26']
-T = len(MESES)
-
-# ── Parâmetros e histórico ────────────────────────────────────
 df_param = pd.read_csv('dataset/trabalho_parametros.csv', index_col=0)
 df_hist  = pd.read_csv('dataset/trabalho_demanda.csv')
-linhas   = ['L1', 'L2', 'L3', 'L4', 'L5']
+linhas   = df_hist.columns[1:].tolist()
 
-# Override manual por linha — espelha a mesma decisão de Previsao_2026.py
-# L4: Holt-Winters preferido ao Holt Duplo (que gera projeção linear)
-FORCAS_TECNICA = {'L4': 'Holt-Winters'}
+from funções.UTILS import gerar_meses_futuros, obter_cores_dinamicas
+ultimo_mes_historico = df_hist['mes'].iloc[-1]
+MESES = [m.title() for m in gerar_meses_futuros(ultimo_mes_historico, 7)]
+T = len(MESES)
 
 # ── Gerar previsões via torneio ───────────────────────────────
 previsoes = {}
@@ -45,11 +42,7 @@ for linha in linhas:
     demandas      = tratar_anomalias_demanda(demandas_orig)
     resultado     = executar_torneio(demandas, n_mms=3, alpha=0.3)
 
-    # Override manual (se configurado para esta linha)
-    if linha in FORCAS_TECNICA:
-        nome_venc = FORCAS_TECNICA[linha]
-    else:
-        nome_venc = resultado['vencedora']
+    nome_venc = resultado['vencedora']
 
     prev_fut         = gerar_previsao(nome_venc, demandas, horizonte=T, n_mms=3, alpha=0.3)
     previsoes[linha] = [round(v) for v in prev_fut]
@@ -315,8 +308,9 @@ print(f"{'═'*76}")
 # ============================================================
 
 cores_est  = {'Chase': '#2196F3', 'Level': '#4CAF50', 'Mista': '#FF9800'}
-cores_lin  = {'L1': '#1565C0', 'L2': '#2E7D32', 'L3': '#E65100',
-              'L4': '#6A1B9A', 'L5': '#B71C1C'}
+import matplotlib.colors as mcolors
+cores_lista = obter_cores_dinamicas(len(linhas))
+cores_lin  = {linha: mcolors.to_hex(cores_lista[i]) for i, linha in enumerate(linhas)}
 
 x_idx = list(range(T))
 
@@ -395,7 +389,7 @@ for j, linha in enumerate(linhas):
 
 ax.set_xticks(range(n_linhas))
 ax.set_xticklabels(
-    [f"L{i+1}\n{df_param[f'L{i+1}']['produtos'].split()[0]}" for i in range(n_linhas)],
+    [f"{linha}\n{df_param[linha]['produtos'].split()[0]}" for linha in linhas],
     fontsize=9
 )
 ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _: f'R$ {v:,.0f}'))

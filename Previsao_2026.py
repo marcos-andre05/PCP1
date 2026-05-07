@@ -13,8 +13,11 @@ from funções.TRATAMENTO import tratar_anomalias_demanda, analisar_anomalias
 # ============================================================
 
 df = pd.read_csv('dataset/trabalho_demanda.csv')
+linhas = df.columns[1:].tolist()
 meses_historico = df['mes'].tolist()
-meses_previsao = ['jan/26', 'fev/26', 'mar/26', 'abr/26', 'mai/26', 'jun/26', 'jul/26']
+
+from funções.UTILS import gerar_meses_futuros, obter_cores_dinamicas
+meses_previsao = gerar_meses_futuros(meses_historico[-1], 7)
 todos_meses = meses_historico + meses_previsao
 
 print("=" * 70)
@@ -26,17 +29,7 @@ todas_previsoes = {'Mês': [m.title() for m in meses_previsao]}
 resumo_tecnicas = []
 dados_grafico = {}
 
-# Override manual por linha — justificado tecnicamente
-# L4: Holt-Winters tem MAD 17% menor e MAPE 30% menor que o Holt Duplo
-#     (vencedor pelo MAD entre os não-enviesados). O Holt Duplo produz uma
-#     projeção linear, equivalente à Regressão Linear, pouco informativa para
-#     uma série com sazonalidade. O viés do Holt-Winters é parcialmente
-#     explicado por um único ponto excepcional (nov/25), aceito como exceção.
-FORCAS_TECNICA = {
-    'L4': 'Holt-Winters'
-}
-
-for linha in ['L1', 'L2', 'L3', 'L4', 'L5']:
+for linha in linhas:
     demandas_orig = df[linha].tolist()
 
     # --- Análise de anomalias (justificativa técnica do tratamento) ---
@@ -56,18 +49,7 @@ for linha in ['L1', 'L2', 'L3', 'L4', 'L5']:
     # Torneio + seleção da técnica sem viés
     resultado = executar_torneio(demandas, n_mms=3, alpha=0.3)
 
-    # Override manual (se configurado para esta linha)
-    if linha in FORCAS_TECNICA:
-        nome_vencedora = FORCAS_TECNICA[linha]
-        tab = resultado['tabela']
-        st  = tab[tab['Técnica'] == nome_vencedora].iloc[0]
-        resultado['mad']      = st['MAD']
-        resultado['mape']     = st['MAPE (%)']
-        resultado['ts_final'] = st['TS']
-        print(f"  📌 {linha}: técnica forçada → {nome_vencedora} "
-              f"(MAD={resultado['mad']:.0f} | viés aceito — Holt Duplo gera projeção linear)")
-    else:
-        nome_vencedora = resultado['vencedora']
+    nome_vencedora = resultado['vencedora']
     
     # Previsão de 7 meses
     previsoes_futuras = gerar_previsao(nome_vencedora, demandas, horizonte=7, n_mms=3, alpha=0.3)
@@ -99,7 +81,7 @@ print(f"{'─' * 70}")
 print(pd.DataFrame(resumo_tecnicas).to_string(index=False))
 
 df_prev = pd.DataFrame(todas_previsoes)
-df_prev['Total'] = df_prev[['L1', 'L2', 'L3', 'L4', 'L5']].sum(axis=1)
+df_prev['Total'] = df_prev[linhas].sum(axis=1)
 
 print(f"\n{'─' * 70}")
 print("  📅 PREVISÃO CONSOLIDADA — JAN/2026 A JUL/2026")
@@ -116,11 +98,13 @@ print(f"{'=' * 70}")
 #  GRÁFICOS INDIVIDUAIS: um por linha de produção
 # ============================================================
 
-cores = {'L1': '#2196F3', 'L2': '#4CAF50', 'L3': '#FF9800', 'L4': '#9C27B0', 'L5': '#F44336'}
+import matplotlib.colors as mcolors
+cores_lista = obter_cores_dinamicas(len(linhas))
+cores = {linha: mcolors.to_hex(cores_lista[i]) for i, linha in enumerate(linhas)}
 labels_x = [m.title() for m in todos_meses]
 
 print()
-for linha in ['L1', 'L2', 'L3', 'L4', 'L5']:
+for linha in linhas:
     dados   = dados_grafico[linha]
     real     = dados['real']
     prev_hist = dados['previsao_historica']
@@ -191,12 +175,13 @@ for linha in ['L1', 'L2', 'L3', 'L4', 'L5']:
 #  GRÁFICO CONSOLIDADO (todas as linhas juntas)
 # ============================================================
 
-fig, axes = plt.subplots(5, 1, figsize=(13, 16), sharex=True)
+fig, axes = plt.subplots(len(linhas), 1, figsize=(13, max(5, 3.2 * len(linhas))), sharex=True)
+if len(linhas) == 1: axes = [axes]
 fig.patch.set_facecolor('#F8F9FA')
 fig.suptitle('Demanda Real vs Previsão — Jan/2024 a Jul/2026',
              fontsize=14, fontweight='bold', y=0.995, color='#1A1A2E')
 
-for i, linha in enumerate(['L1', 'L2', 'L3', 'L4', 'L5']):
+for i, linha in enumerate(linhas):
     ax    = axes[i]
     dados = dados_grafico[linha]
     real     = dados['real']
@@ -223,7 +208,7 @@ for i, linha in enumerate(['L1', 'L2', 'L3', 'L4', 'L5']):
             linestyle='--', alpha=0.85, label=f'Previsão ({dados["tecnica"]})', zorder=3)
     ax.axvspan(n_hist - 0.5, n_hist + n_fut - 0.5, alpha=0.07, color=cor, zorder=1)
     ax.axvline(x=n_hist - 0.5, color='gray', linestyle=':', linewidth=1, alpha=0.5)
-    ax.set_ylabel(f'Linha {linha[-1]}', fontsize=11, fontweight='bold', color=cor)
+    ax.set_ylabel(f'Linha {linha}', fontsize=11, fontweight='bold', color=cor)
     ax.legend(loc='upper left', fontsize=7.5, framealpha=0.8)
     ax.grid(True, alpha=0.2, linestyle='--')
     ax.yaxis.set_major_formatter(mticker.FuncFormatter(lambda v, _: f'{v:,.0f}'))
