@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 # 1. Carregamento dos dados
 # Certifique-se de que o arquivo CSV esteja na pasta 'dataset' conforme o roteiro
 try:
-    df = pd.read_csv('dataset/trabalho_demanda.csv')
-    df_param = pd.read_csv('dataset/trabalho_parametros.csv', index_col=0)
+    df = pd.read_csv('new_dataset/trabalho_demanda.csv')
+    df_param = pd.read_csv('new_dataset/trabalho_parametros.csv', index_col=0)
 except FileNotFoundError:
     print("Erro: Arquivo não encontrado. Verifique se o caminho 'dataset/trabalho_demanda.csv' está correto.")
 

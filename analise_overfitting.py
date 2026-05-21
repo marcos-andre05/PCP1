@@ -57,7 +57,7 @@ def split_e_prever(demandas, n_treino):
 # a análise mais simples de overfitting é ver se o erro in-sample da primeira metade
 # é drasticamente menor que o da segunda metade, ou simplesmente dividir a série.
 def analisar_overfitting():
-    df = pd.read_csv('dataset/trabalho_demanda.csv')
+    df = pd.read_csv('new_dataset/trabalho_demanda.csv')
     linhas = df.columns[1:].tolist()
     
     n_total = len(df)

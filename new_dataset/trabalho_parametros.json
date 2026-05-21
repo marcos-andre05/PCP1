@@ -1,0 +1,91 @@
+{
+  "linhas": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5"
+  ],
+  "parametros": {
+    "L1": {
+      "produtos": "Engrenagens Sinterizadas",
+      "capacidade_normal": 55000,
+      "capacidade_extra": 18000,
+      "custo_normal": 14.2,
+      "custo_extra": 19.9,
+      "custo_estoque": 5.4,
+      "subcontratacao_max": 30000,
+      "custo_subcontratacao": 27.5,
+      "estoque_inicial": 11000,
+      "estoque_minimo": 5500,
+      "custo_setup": 220,
+      "lead_time_dias": 7,
+      "sigma_demanda_diaria": 380,
+      "nivel_servico": 0.95
+    },
+    "L2": {
+      "produtos": "Hastes de Pistão",
+      "capacidade_normal": 7000,
+      "capacidade_extra": 2500,
+      "custo_normal": 26.8,
+      "custo_extra": 37.5,
+      "custo_estoque": 11.2,
+      "subcontratacao_max": 8000,
+      "custo_subcontratacao": 50.8,
+      "estoque_inicial": 2200,
+      "estoque_minimo": 1100,
+      "custo_setup": 350,
+      "lead_time_dias": 10,
+      "sigma_demanda_diaria": 60,
+      "nivel_servico": 0.92
+    },
+    "L3": {
+      "produtos": "Buchas Bronze",
+      "capacidade_normal": 32000,
+      "capacidade_extra": 11000,
+      "custo_normal": 19.5,
+      "custo_extra": 27.3,
+      "custo_estoque": 7.6,
+      "subcontratacao_max": 18000,
+      "custo_subcontratacao": 36.9,
+      "estoque_inicial": 6500,
+      "estoque_minimo": 3200,
+      "custo_setup": 410,
+      "lead_time_dias": 5,
+      "sigma_demanda_diaria": 180,
+      "nivel_servico": 0.97
+    },
+    "L4": {
+      "produtos": "Sapatas de Freio",
+      "capacidade_normal": 12000,
+      "capacidade_extra": 4000,
+      "custo_normal": 32.4,
+      "custo_extra": 45.4,
+      "custo_estoque": 14.0,
+      "subcontratacao_max": 6000,
+      "custo_subcontratacao": 60.5,
+      "estoque_inicial": 2500,
+      "estoque_minimo": 1200,
+      "custo_setup": 290,
+      "lead_time_dias": 9,
+      "sigma_demanda_diaria": 75,
+      "nivel_servico": 0.93
+    },
+    "L5": {
+      "produtos": "Coletores Metálicos",
+      "capacidade_normal": 220000,
+      "capacidade_extra": 75000,
+      "custo_normal": 9.1,
+      "custo_extra": 12.8,
+      "custo_estoque": 3.2,
+      "subcontratacao_max": 130000,
+      "custo_subcontratacao": 24.0,
+      "estoque_inicial": 32000,
+      "estoque_minimo": 16000,
+      "custo_setup": 510,
+      "lead_time_dias": 4,
+      "sigma_demanda_diaria": 720,
+      "nivel_servico": 0.98
+    }
+  }
+}

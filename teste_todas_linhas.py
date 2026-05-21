@@ -5,7 +5,7 @@ from torneio import executar_torneio, exibir_resultado
 from funções.TRATAMENTO import tratar_anomalias_demanda
 
 # Carregamento e identificação de todas as linhas de produção
-df = pd.read_csv('dataset/trabalho_demanda.csv')
+df = pd.read_csv('new_dataset/trabalho_demanda.csv')
 linhas = df.columns[1:].tolist()
 
 print(f"============================================================")

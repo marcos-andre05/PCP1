@@ -12,7 +12,7 @@ from funções.TRATAMENTO import tratar_anomalias_demanda, analisar_anomalias
 #  Usando a técnica vencedora NÃO enviesada de cada linha
 # ============================================================
 
-df = pd.read_csv('dataset/trabalho_demanda.csv')
+df = pd.read_csv('new_dataset/trabalho_demanda.csv')
 linhas = df.columns[1:].tolist()
 meses_historico = df['mes'].tolist()
 

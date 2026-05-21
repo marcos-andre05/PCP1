@@ -1,0 +1,65 @@
+{
+  "linha": "L4",
+  "itens": [
+    {
+      "item": "Material de fricção semi-metálico",
+      "preco_unitario": 35.0,
+      "demanda_anual": 64000,
+      "valor_anual": 2240000.0
+    },
+    {
+      "item": "Placa de aço base",
+      "preco_unitario": 18.5,
+      "demanda_anual": 64000,
+      "valor_anual": 1184000.0
+    },
+    {
+      "item": "Cola termoativada",
+      "preco_unitario": 48.0,
+      "demanda_anual": 5800,
+      "valor_anual": 278400.0
+    },
+    {
+      "item": "Rebite de fixação",
+      "preco_unitario": 0.42,
+      "demanda_anual": 192000,
+      "valor_anual": 80640.0
+    },
+    {
+      "item": "Verniz selador",
+      "preco_unitario": 28.5,
+      "demanda_anual": 3200,
+      "valor_anual": 91200.0
+    },
+    {
+      "item": "Embalagem dupla",
+      "preco_unitario": 3.2,
+      "demanda_anual": 32000,
+      "valor_anual": 102400.0
+    },
+    {
+      "item": "Etiqueta de calibração",
+      "preco_unitario": 0.65,
+      "demanda_anual": 64000,
+      "valor_anual": 41600.0
+    },
+    {
+      "item": "Solvente limpeza pré-cola",
+      "preco_unitario": 16.0,
+      "demanda_anual": 6800,
+      "valor_anual": 108800.0
+    },
+    {
+      "item": "Pano técnico",
+      "preco_unitario": 1.1,
+      "demanda_anual": 9500,
+      "valor_anual": 10450.0
+    },
+    {
+      "item": "Filme protetor",
+      "preco_unitario": 0.78,
+      "demanda_anual": 24000,
+      "valor_anual": 18720.0
+    }
+  ]
+}

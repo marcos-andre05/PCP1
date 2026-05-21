@@ -1,0 +1,65 @@
+{
+  "linha": "L1",
+  "itens": [
+    {
+      "item": "Pó metálico sinterizado",
+      "preco_unitario": 28.5,
+      "demanda_anual": 220000,
+      "valor_anual": 6270000.0
+    },
+    {
+      "item": "Resina ligante",
+      "preco_unitario": 65.0,
+      "demanda_anual": 18000,
+      "valor_anual": 1170000.0
+    },
+    {
+      "item": "Lubrificante de prensagem",
+      "preco_unitario": 22.0,
+      "demanda_anual": 9500,
+      "valor_anual": 209000.0
+    },
+    {
+      "item": "Eletrodo de tratamento",
+      "preco_unitario": 38.0,
+      "demanda_anual": 2800,
+      "valor_anual": 106400.0
+    },
+    {
+      "item": "Embalagem termoformada",
+      "preco_unitario": 2.4,
+      "demanda_anual": 220000,
+      "valor_anual": 528000.0
+    },
+    {
+      "item": "Etiqueta de rastreamento",
+      "preco_unitario": 0.18,
+      "demanda_anual": 220000,
+      "valor_anual": 39600.0
+    },
+    {
+      "item": "Pino de fixação",
+      "preco_unitario": 0.85,
+      "demanda_anual": 96000,
+      "valor_anual": 81600.0
+    },
+    {
+      "item": "Cinta de aço",
+      "preco_unitario": 1.6,
+      "demanda_anual": 14000,
+      "valor_anual": 22400.0
+    },
+    {
+      "item": "Solvente desengraxante",
+      "preco_unitario": 14.5,
+      "demanda_anual": 4200,
+      "valor_anual": 60900.0
+    },
+    {
+      "item": "Pano industrial",
+      "preco_unitario": 0.95,
+      "demanda_anual": 18000,
+      "valor_anual": 17100.0
+    }
+  ]
+}

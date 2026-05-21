@@ -1,0 +1,15 @@
+parametro,L1,L2,L3,L4,L5
+produtos,Engrenagens Sinterizadas,Hastes de Pistão,Buchas Bronze,Sapatas de Freio,Coletores Metálicos
+capacidade_normal,55000,7000,32000,12000,220000
+capacidade_extra,18000,2500,11000,4000,75000
+custo_normal,14.2,26.8,19.5,32.4,9.1
+custo_extra,19.9,37.5,27.3,45.4,12.8
+custo_estoque,5.4,11.2,7.6,14.0,3.2
+subcontratacao_max,30000,8000,18000,6000,130000
+custo_subcontratacao,27.5,50.8,36.9,60.5,24.0
+estoque_inicial,11000,2200,6500,2500,32000
+estoque_minimo,5500,1100,3200,1200,16000
+custo_setup,220,350,410,290,510
+lead_time_dias,7,10,5,9,4
+sigma_demanda_diaria,380,60,180,75,720
+nivel_servico,0.95,0.92,0.97,0.93,0.98

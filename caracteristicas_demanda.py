@@ -18,8 +18,8 @@ from statsmodels.tsa.stattools import adfuller, acf
 from funções.TRATAMENTO import analisar_anomalias
 
 # ── 1. Dados ────────────────────────────────────────────────────────────────
-df = pd.read_csv('dataset/trabalho_demanda.csv')
-df_param = pd.read_csv('dataset/trabalho_parametros.csv', index_col=0)
+df = pd.read_csv('new_dataset/trabalho_demanda.csv')
+df_param = pd.read_csv('new_dataset/trabalho_parametros.csv', index_col=0)
 
 colunas = df.columns[1:].tolist()
 produtos_map = df_param.loc['produtos'].to_dict()

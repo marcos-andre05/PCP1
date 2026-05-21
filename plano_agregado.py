@@ -16,8 +16,8 @@ from funções.TRATAMENTO import tratar_anomalias_demanda, analisar_anomalias
 #  Custo: Σ(Cn·Xt + Ce·Ot + Cs·St + Ci·It)
 # ============================================================
 
-df_param = pd.read_csv('dataset/trabalho_parametros.csv', index_col=0)
-df_hist  = pd.read_csv('dataset/trabalho_demanda.csv')
+df_param = pd.read_csv('new_dataset/trabalho_parametros.csv', index_col=0)
+df_hist  = pd.read_csv('new_dataset/trabalho_demanda.csv')
 linhas   = df_hist.columns[1:].tolist()
 
 from funções.UTILS import gerar_meses_futuros, obter_cores_dinamicas

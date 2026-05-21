@@ -1,6 +1,6 @@
 ﻿Linha,Produto,Custo Chase (R$),Custo Level (R$),Custo Mista (R$),Melhor Estratégia
-L1,Discos de Freio,4607436.7,4607404.2,4607404.2,Level
-L2,Cubos de Roda,2475555.7,2967715.8,2682294.3000000003,Chase
-L3,Tambores de Freio,5967816.0,8508151.5,6388606.8,Chase
-L4,Flanges Industriais,20743853.9,20743853.9,20743853.9,Chase
-L5,Suportes Metálicos,3911099.0,3911099.0,3911099.0,Chase
+L1,Engrenagens Sinterizadas,5007718.899999999,7224554.2,5582582.5,Chase
+L2,Hastes de Pistão,3225461.6,3225461.6,3225461.6,Chase
+L3,Buchas Bronze,4184100.5,5293862.4,4552298.5,Chase
+L4,Sapatas de Freio,2411682.0,3685990.0,2634648.8,Chase
+L5,Coletores Metálicos,27887352.0,27887352.0,27887352.0,Chase
