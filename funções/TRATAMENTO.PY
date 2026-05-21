@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 
-def tratar_anomalias_demanda(demandas, fator_iqr=1.5, janela_shift=6, limite_shift=0.40):
+def tratar_anomalias_demanda(demandas, fator_iqr=1.5, janela_shift=6, limite_shift=0.50):
     """
     Trata outliers (método IQR) e level shifts em uma série de demanda.
     Retorna uma nova lista com os dados ajustados.
@@ -36,22 +36,31 @@ def tratar_anomalias_demanda(demandas, fator_iqr=1.5, janela_shift=6, limite_shi
     df_tratado = df_sem_outliers.copy()
 
     # Varre a série comparando janelas adjacentes para achar a quebra de patamar
-    for i in range(janela_shift, len(df_tratado) - janela_shift):
+    max_var = 0
+    melhor_i = -1
+    melhor_fator = 1
+
+    for i in range(janela_shift, len(df_tratado) - janela_shift + 1):
         media_ant  = df_tratado[i - janela_shift:i].mean()
         media_post = df_tratado[i:i + janela_shift].mean()
 
-        # Se a média mudar mais que o limite (ex: 40% = 0.40) de repente
-        if media_ant > 0 and abs(media_post - media_ant) / media_ant > limite_shift:
-            # Ajusta todo o passado ao novo patamar
-            fator_ajuste = media_post / media_ant
-            df_tratado[:i] = (df_tratado[:i] * fator_ajuste).round()
-            break   # apenas o primeiro shift relevante
+        # Encontra o ponto exato de maior mudança que supera o limite
+        if media_ant > 0:
+            var = abs(media_post - media_ant) / media_ant
+            if var > limite_shift and var > max_var:
+                max_var = var
+                melhor_i = i
+                melhor_fator = media_post / media_ant
+
+    if melhor_i != -1:
+        # Ajusta todo o passado ao novo patamar
+        df_tratado[:melhor_i] = (df_tratado[:melhor_i] * melhor_fator).round()
 
     # Arredonda e converte para lista de inteiros
     return df_tratado.round(0).astype(int).tolist()
 
 
-def analisar_anomalias(demandas, fator_iqr=1.5, janela_shift=6, limite_shift=0.40):
+def analisar_anomalias(demandas, fator_iqr=1.5, janela_shift=6, limite_shift=0.50):
     """
     Detecta outliers (método IQR) e level shifts SEM modificar a série.
     Retorna um relatório com o que foi encontrado.
@@ -78,13 +87,25 @@ def analisar_anomalias(demandas, fator_iqr=1.5, janela_shift=6, limite_shift=0.4
     # --- Detecção de level shift ---
     level_shift = False
     ponto_shift = None
-    for i in range(janela_shift, len(df) - janela_shift):
+    max_var = 0
+    melhor_media_ant = None
+    melhor_media_post = None
+
+    for i in range(janela_shift, len(df) - janela_shift + 1):
         media_ant  = df[i - janela_shift:i].mean()
         media_post = df[i:i + janela_shift].mean()
-        if media_ant > 0 and abs(media_post - media_ant) / media_ant > limite_shift:
-            level_shift = True
-            ponto_shift = int(i)
-            break
+        if media_ant > 0:
+            var = abs(media_post - media_ant) / media_ant
+            if var > limite_shift and var > max_var:
+                level_shift = True
+                ponto_shift = int(i)
+                max_var = var
+                melhor_media_ant = media_ant
+                melhor_media_post = media_post
+
+    if level_shift:
+        media_ant = melhor_media_ant
+        media_post = melhor_media_post
 
     return {
         'n_outliers':       n_outliers,
