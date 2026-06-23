@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 
-def tratar_anomalias_demanda(demandas, fator_iqr=1.5, janela_shift=6, limite_shift=0.50):
+def tratar_anomalias_demanda(demandas, fator_iqr=1.5, janela_shift=6, limite_shift=0.40):
     """
     Trata outliers (método IQR) e level shifts em uma série de demanda.
     Retorna uma nova lista com os dados ajustados.
@@ -60,7 +60,7 @@ def tratar_anomalias_demanda(demandas, fator_iqr=1.5, janela_shift=6, limite_shi
     return df_tratado.round(0).astype(int).tolist()
 
 
-def analisar_anomalias(demandas, fator_iqr=1.5, janela_shift=6, limite_shift=0.50):
+def analisar_anomalias(demandas, fator_iqr=1.5, janela_shift=6, limite_shift=0.40):
     """
     Detecta outliers (método IQR) e level shifts SEM modificar a série.
     Retorna um relatório com o que foi encontrado.
