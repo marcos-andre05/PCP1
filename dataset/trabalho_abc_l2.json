@@ -1,0 +1,65 @@
+{
+  "linha": "L2",
+  "itens": [
+    {
+      "item": "Aço SAE 1045",
+      "preco_unitario": 15.6,
+      "demanda_anual": 96000,
+      "valor_anual": 1497600.0
+    },
+    {
+      "item": "Rolamento cônico",
+      "preco_unitario": 38.5,
+      "demanda_anual": 48000,
+      "valor_anual": 1848000.0
+    },
+    {
+      "item": "Retentor de vedação",
+      "preco_unitario": 12.3,
+      "demanda_anual": 48000,
+      "valor_anual": 590400.0
+    },
+    {
+      "item": "Graxa EP2",
+      "preco_unitario": 22.0,
+      "demanda_anual": 5500,
+      "valor_anual": 121000.0
+    },
+    {
+      "item": "Inserto de usinagem",
+      "preco_unitario": 85.0,
+      "demanda_anual": 1200,
+      "valor_anual": 102000.0
+    },
+    {
+      "item": "Fluido de retífica",
+      "preco_unitario": 18.0,
+      "demanda_anual": 3000,
+      "valor_anual": 54000.0
+    },
+    {
+      "item": "Embalagem plástica",
+      "preco_unitario": 0.9,
+      "demanda_anual": 96000,
+      "valor_anual": 86400.0
+    },
+    {
+      "item": "Etiqueta código barras",
+      "preco_unitario": 0.12,
+      "demanda_anual": 192000,
+      "valor_anual": 23040.0
+    },
+    {
+      "item": "Arruela de pressão",
+      "preco_unitario": 0.18,
+      "demanda_anual": 192000,
+      "valor_anual": 34560.0
+    },
+    {
+      "item": "Protetor VCI",
+      "preco_unitario": 2.5,
+      "demanda_anual": 48000,
+      "valor_anual": 120000.0
+    }
+  ]
+}

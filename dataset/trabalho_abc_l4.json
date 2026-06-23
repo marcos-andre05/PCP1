@@ -1,0 +1,65 @@
+{
+  "linha": "L4",
+  "itens": [
+    {
+      "item": "Aço carbono ASTM A105",
+      "preco_unitario": 8.2,
+      "demanda_anual": 1200000,
+      "valor_anual": 9840000.0
+    },
+    {
+      "item": "Aço inox 316L",
+      "preco_unitario": 42.0,
+      "demanda_anual": 120000,
+      "valor_anual": 5040000.0
+    },
+    {
+      "item": "Junta de vedação",
+      "preco_unitario": 5.5,
+      "demanda_anual": 600000,
+      "valor_anual": 3300000.0
+    },
+    {
+      "item": "Parafuso estojos",
+      "preco_unitario": 3.8,
+      "demanda_anual": 480000,
+      "valor_anual": 1824000.0
+    },
+    {
+      "item": "Tinta epóxi",
+      "preco_unitario": 55.0,
+      "demanda_anual": 8000,
+      "valor_anual": 440000.0
+    },
+    {
+      "item": "Decapante químico",
+      "preco_unitario": 28.0,
+      "demanda_anual": 5500,
+      "valor_anual": 154000.0
+    },
+    {
+      "item": "Inserto de torneamento",
+      "preco_unitario": 95.0,
+      "demanda_anual": 2400,
+      "valor_anual": 228000.0
+    },
+    {
+      "item": "Embalagem exportação",
+      "preco_unitario": 4.0,
+      "demanda_anual": 200000,
+      "valor_anual": 800000.0
+    },
+    {
+      "item": "Etiqueta industrial",
+      "preco_unitario": 0.1,
+      "demanda_anual": 1200000,
+      "valor_anual": 120000.0
+    },
+    {
+      "item": "Óleo solúvel",
+      "preco_unitario": 18.5,
+      "demanda_anual": 7000,
+      "valor_anual": 129500.0
+    }
+  ]
+}

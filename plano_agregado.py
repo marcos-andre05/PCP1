@@ -16,8 +16,8 @@ from funções.TRATAMENTO import tratar_anomalias_demanda, analisar_anomalias
 #  Custo: Σ(Cn·Xt + Ce·Ot + Cs·St + Ci·It)
 # ============================================================
 
-df_param = pd.read_csv('new_dataset/trabalho_parametros.csv', index_col=0)
-df_hist  = pd.read_csv('new_dataset/trabalho_demanda.csv')
+df_param = pd.read_csv('dataset/trabalho_parametros.csv', index_col=0)
+df_hist  = pd.read_csv('dataset/trabalho_demanda.csv')
 linhas   = df_hist.columns[1:].tolist()
 
 from funções.UTILS import gerar_meses_futuros, obter_cores_dinamicas
@@ -250,7 +250,13 @@ for linha in linhas:
     c_chase = custos_linha['Chase']
     c_level = custos_linha['Level']
     c_mista = custos_linha['Mista']
+
+    if c_chase == c_level == c_mista:
+        print(f"  ⚠️  ATENÇÃO na Linha {linha}: Chase, Level e Mista apresentaram o mesmo custo (R$ {c_chase:,.0f}).")
+        print(f"      Diagnóstico: A demanda projetada excede a capacidade total (Normal + Extra).")
+        print(f"      As três estratégias precisaram esgotar a subcontratação e ficaram idênticas.")
     
+
     linhas_csv_custos.append({
         'Linha': linha,
         'Produto': produto,

@@ -1,0 +1,107 @@
+{
+  "linhas": [
+    "L1",
+    "L2",
+    "L3",
+    "L4",
+    "L5"
+  ],
+  "produtos": [
+    "Discos de Freio",
+    "Cubos de Roda",
+    "Tambores de Freio",
+    "Flanges Industriais",
+    "Suportes Metálicos"
+  ],
+  "capacidade_normal": [
+    30000,
+    16000,
+    75000,
+    200000,
+    13200
+  ],
+  "capacidade_extra": [
+    10000,
+    6000,
+    25000,
+    70000,
+    4400
+  ],
+  "custo_normal": [
+    18.5,
+    22.3,
+    12.75,
+    8.9,
+    28.6
+  ],
+  "custo_extra": [
+    25.8,
+    31.5,
+    19.4,
+    14.2,
+    38.9
+  ],
+  "custo_estoque": [
+    7.2,
+    9.8,
+    5.1,
+    3.45,
+    11.3
+  ],
+  "subcontratacao_max": [
+    25000,
+    18000,
+    40000,
+    120000,
+    15000
+  ],
+  "custo_subcontratacao": [
+    35.6,
+    42.15,
+    28.9,
+    22.5,
+    52.4
+  ],
+  "estoque_inicial": [
+    6000,
+    4500,
+    12000,
+    30000,
+    3500
+  ],
+  "estoque_minimo": [
+    3000,
+    2000,
+    5000,
+    15000,
+    1500
+  ],
+  "custo_setup": [
+    185,
+    210,
+    320,
+    450,
+    275
+  ],
+  "lead_time_dias": [
+    5,
+    7,
+    4,
+    6,
+    8
+  ],
+  "sigma_demanda_diaria": [
+    120,
+    85,
+    250,
+    650,
+    55
+  ],
+  "nivel_servico": [
+    0.95,
+    0.9,
+    0.95,
+    0.98,
+    0.92
+  ]
+}

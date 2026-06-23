@@ -18,8 +18,8 @@ from statsmodels.tsa.stattools import adfuller, acf
 from funções.TRATAMENTO import analisar_anomalias
 
 # ── 1. Dados ────────────────────────────────────────────────────────────────
-df = pd.read_csv('new_dataset/trabalho_demanda.csv')
-df_param = pd.read_csv('new_dataset/trabalho_parametros.csv', index_col=0)
+df = pd.read_csv('dataset/trabalho_demanda.csv')
+df_param = pd.read_csv('dataset/trabalho_parametros.csv', index_col=0)
 
 colunas = df.columns[1:].tolist()
 produtos_map = df_param.loc['produtos'].to_dict()
@@ -52,12 +52,20 @@ for col in colunas:
     adf_stat, adf_p, *_ = adfuller(serie, autolag='AIC')
     estacionaria = 'Sim' if adf_p < 0.05 else 'Não'
 
-    # ── Sazonalidade (ACF no lag 12) ─────────────────────────────────────
+    # ── Sazonalidade (ACF nos lags 3, 4, 6, 12) ──────────────────────────
     # Limite de significância Bartlett para n observações: ±1.96/√n
     limite_acf = 1.96 / np.sqrt(n)
     acf_vals   = acf(serie, nlags=12, fft=False)
-    acf_lag12  = acf_vals[12]
-    sazonalidade = 'Sim' if abs(acf_lag12) > limite_acf else 'Não'
+    
+    # Verifica se há autocorrelação significativa em lags sazonais comuns
+    lags_sazonais = [3, 4, 6, 12]
+    max_acf_sazonal = 0
+    for lag in lags_sazonais:
+        if abs(acf_vals[lag]) > abs(max_acf_sazonal):
+            max_acf_sazonal = acf_vals[lag]
+            
+    sazonalidade = 'Sim' if abs(max_acf_sazonal) > limite_acf else 'Não'
+    acf_lag12  = acf_vals[12] # Mantém para a tabela antiga, mas a regra melhorou
 
     # ── Anomalias (módulo TRATAMENTO) ────────────────────────────────────
     rel = analisar_anomalias(serie.tolist())
@@ -104,7 +112,7 @@ print('Legenda:')
 print('  CV (%)        : Coeficiente de Variacao - variabilidade relativa da serie')
 print('  Tendência     : Significativa se p-valor Tend. < 0.05')
 print('  R2            : Coeficiente de determinacao da regressao linear')
-print('  Sazonalidade  : ACF no lag 12 significativo se |ACF Lag-12| > Lim. ACF (~{:.3f})'.format(1.96/np.sqrt(len(df))))
+print('  Sazonalidade  : ACF significativo em lags sazonais comuns (3, 4, 6, 12) > Lim. ACF (~{:.3f})'.format(1.96/np.sqrt(len(df))))
 print('  Estacionaria  : Teste ADF - "Sim" se ADF p-valor < 0.05')
 print('  Level Shift   : Mudanca de patamar detectada por janela deslizante (6 periodos, limiar 40%)')
 print('  Outliers (IQR): Pontos fora de [Q1 - 1.5*IQR , Q3 + 1.5*IQR]')

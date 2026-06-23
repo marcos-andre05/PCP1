@@ -4,7 +4,7 @@ from funções.TRATAMENTO import tratar_anomalias_demanda
 
 # 1. Tabelas de métricas de erro por linha e 2. Tabela de vencedoras
 print("Gerando tabelas de métricas de erro e vencedoras...")
-df = pd.read_csv('new_dataset/trabalho_demanda.csv')
+df = pd.read_csv('dataset/trabalho_demanda.csv')
 linhas = df.columns[1:].tolist()
 
 vencedoras = []
